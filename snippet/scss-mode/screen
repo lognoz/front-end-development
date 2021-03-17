@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: screen
+# type: command
+# --
+(yas-expand-snippet
+  (if (and (boundp 'front-end-development-mode) front-end-development-mode)
+      (front-end-development-scss-include-screen)
+  "@media screen and (max-width: $1px) {\n\t$0\n}"))
