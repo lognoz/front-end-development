@@ -33,8 +33,12 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'subr-x)
-(require 'json)
+
+(declare-function string-trim "subr-x")
+(declare-function json-read-from-string "json")
+(declare-function json-encode-alist "json")
+(declare-function json-pretty-print-buffer "json")
+(declare-function yas-load-directory "yasnippet")
 
 
 ;;; Contextual constant.
@@ -44,6 +48,9 @@
   :prefix "front-end-development"
   :group 'tools
   :link '(url-link "https://github.com/lognoz/front-end-development"))
+
+(defconst front-end-development-base-directory (file-name-directory load-file-name)
+  "The directory package was loaded from.")
 
 (defvar front-end-development-root-directory nil
   "The directory of project root.")
@@ -156,6 +163,15 @@ At the end of the function, the scss variables will be updated."
   "Mode for front-end languages development."
   :lighter " front-end-development")
 
+;;;###autoload
+(defun front-end-development-snippet-bootstrap ()
+  "Insert snippet directory to `yas-snippet-dirs'."
+  (let ((directory (expand-file-name "snippet" front-end-development-base-directory)))
+    (when (boundp 'yas-snippet-dirs)
+        (add-to-list 'yas-snippet-dirs directory t)
+      (yas-load-directory directory))))
+
+;;;###autoload
 (defun front-end-development-scss-include-screen ()
   "Return mixin with predefined breakpoints variable."
   (front-end-development--set-global)
@@ -189,6 +205,10 @@ At the end of the function, the scss variables will be updated."
            front-end-development-version
            emacs-version
            system-type))
+
+;;;###autoload
+(eval-after-load 'yasnippet
+  '(front-end-development-snippet-bootstrap))
 
 
 (provide 'front-end-development)
